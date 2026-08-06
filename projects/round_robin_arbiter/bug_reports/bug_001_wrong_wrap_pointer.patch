@@ -1,0 +1,12 @@
+diff --git a/projects/round_robin_arbiter/rtl/round_robin_arbiter.sv b/projects/round_robin_arbiter/rtl/round_robin_arbiter.sv
+--- a/projects/round_robin_arbiter/rtl/round_robin_arbiter.sv
++++ b/projects/round_robin_arbiter/rtl/round_robin_arbiter.sv
+@@ -76,7 +76,7 @@ module round_robin_arbiter (
+                         priority_ptr_next = 2'b11;
+                     end else if (req[3] == 1'b1) begin
+                         grant             = 4'b1000;
+-                        priority_ptr_next = 2'b00;
++                        priority_ptr_next = 2'b01;
+                     end else if (req[0] == 1'b1) begin
+                         grant             = 4'b0001;
+                         priority_ptr_next = 2'b01;

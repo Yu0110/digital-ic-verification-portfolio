@@ -1,6 +1,8 @@
 `ifndef FIFO_UVM_RANDOM_SEQUENCE_SV
 `define FIFO_UVM_RANDOM_SEQUENCE_SV
 
+// 约束随机序列：生成可配置数量的随机读写事务，并在末尾排空 FIFO。
+// request_digest 用于确认同一随机种子能够稳定重放同一组请求。
 class fifo_uvm_random_sequence #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -73,6 +75,7 @@ class fifo_uvm_random_sequence #(
         transaction_count_text      = "";
         plusarg_status              = 0;
 
+        // 命令行参数允许回归脚本调整随机事务数量，并严格拒绝非法文本。
         if ($test$plusargs("UVM_RANDOM_TRANSACTIONS")) begin
             plusarg_status = $value$plusargs(
                 "UVM_RANDOM_TRANSACTIONS=%s",
@@ -164,6 +167,7 @@ class fifo_uvm_random_sequence #(
             end
         endcase
 
+        // 对操作、数据和事务编号计算轻量摘要，供随机重放一致性检查。
         request_digest =
             (request_digest * 64'd1099511628211) ^
             64'(request.wr_data) ^
@@ -185,6 +189,7 @@ class fifo_uvm_random_sequence #(
             return;
         end
 
+        // 最多发送 DEPTH 个只读事务，使任意合法随机结束状态都能排空。
         start_item(request);
         request.transaction_id = {32'b0, produced_count} + 64'd1;
         request.wr_en           = 1'b0;

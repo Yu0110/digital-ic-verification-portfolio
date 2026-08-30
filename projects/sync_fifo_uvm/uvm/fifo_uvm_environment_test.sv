@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_ENVIRONMENT_TEST_SV
 `define FIFO_UVM_ENVIRONMENT_TEST_SV
 
+// 审计订阅者统计 environment 广播出来的事务，用于核对拓扑完整性。
 class fifo_uvm_environment_audit_tap #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -34,6 +35,7 @@ class fifo_uvm_environment_audit_tap #(
 
 endclass
 
+// 主动环境端到端测试：运行 sequence，并核对所有组件计数和最终状态。
 class fifo_uvm_environment_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;
@@ -154,6 +156,7 @@ class fifo_uvm_environment_test extends uvm_test;
 
 endclass
 
+// 被动 agent 测试：外部直接驱动接口，agent 只监视而不创建 driver/sequencer。
 class fifo_uvm_passive_agent_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;
@@ -277,6 +280,7 @@ class fifo_uvm_passive_agent_test extends uvm_test;
 
 endclass
 
+// 故意漏接 coverage 的错误环境，仅供预期负向拓扑测试使用。
 class fifo_uvm_broken_environment #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -297,6 +301,7 @@ class fifo_uvm_broken_environment #(
 
 endclass
 
+// 预期负向测试：确认环境能在展开阶段发现订阅者连接缺失。
 class fifo_uvm_environment_topology_fault_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;

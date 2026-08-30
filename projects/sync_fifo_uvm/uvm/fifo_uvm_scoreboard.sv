@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_SCOREBOARD_SV
 `define FIFO_UVM_SCOREBOARD_SV
 
+// UVM 记分板订阅 monitor 事务，并逐字段比较 DUT 响应与参考模型预测。
 class fifo_uvm_scoreboard #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -82,6 +83,7 @@ class fifo_uvm_scoreboard #(
         compared_count++;
         expected_id = {32'b0, compared_count};
 
+        // 每收到一笔实际事务，参考模型同步推进一次并给出期望响应。
         expected_tx = reference_model.predict(actual_tx);
         if (expected_tx == null) begin
             error_count++;
@@ -102,6 +104,7 @@ class fifo_uvm_scoreboard #(
         empty_mismatch = (actual_tx.empty !== expected_tx.empty);
         full_mismatch  = (actual_tx.full  !== expected_tx.full);
 
+        // 四态比较可将未知态 X/Z 作为真实错误报告出来。
         mismatch = transaction_id_mismatch ||
                    sampled_mismatch ||
                    rd_data_mismatch ||

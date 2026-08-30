@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_SCOREBOARD_TEST_SV
 `define FIFO_UVM_SCOREBOARD_TEST_SV
 
+// 参考模型单元测试：用手工期望值覆盖空、中间、满和复位后的行为。
 class fifo_uvm_reference_model_test extends uvm_test;
 
     localparam int DATA_WIDTH  = 16;
@@ -186,6 +187,7 @@ class fifo_uvm_reference_model_test extends uvm_test;
 
 endclass
 
+// 记分板正向测试：人工发送实际事务并确认全部字段比较通过。
 class fifo_uvm_scoreboard_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;
@@ -300,6 +302,7 @@ class fifo_uvm_scoreboard_test extends uvm_test;
 
 endclass
 
+// 预期负向测试：故意篡改采样字段，证明记分板能够报告错误。
 class fifo_uvm_scoreboard_fault_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;

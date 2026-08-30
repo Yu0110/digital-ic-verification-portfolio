@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 通用 UVM 编译与运行入口；各子脚本通过环境变量选择测试和期望结果。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 UVM_HOME="${UVM_HOME:-${PROJECT_ROOT}/.deps/uvm}"
@@ -36,7 +37,7 @@ if [[ "${UVM_COMPILE_SCOPE}" == "auto" ]]; then
     fi
 fi
 
-# Keep the minimal toolchain check isolated from the complete FIFO environment.
+# 最小工具链测试与完整 FIFO 环境分开编译，降低首次自检成本。
 case "${UVM_COMPILE_SCOPE}" in
     minimal)
         if [[ "${UVM_TESTNAME}" != "fifo_uvm_smoke_test" ]]; then
@@ -87,7 +88,7 @@ COVERAGE_FILE="${COVERAGE_FILE:-${DEFAULT_COVERAGE_FILE}}"
 
 mkdir -p "${BUILD_DIR}"
 
-# Compile the UVM Direct Programming Interface and enable assertion/coverage support.
+# 编译 UVM 直接编程接口，并启用断言与用户覆盖率支持。
 VERILATOR_ARGS=(
     --binary
     --sv

@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 作品集统一入口：默认执行快速回归，--full 执行 FIFO 完整验证套件。
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/ic-verification-portfolio.XXXXXX")"
 RUN_FULL=0
@@ -40,6 +41,7 @@ if (( $# > 1 )); then
 fi
 
 cleanup() {
+    # 仲裁器的临时编译文件不保留在仓库目录中。
     rm -rf "${BUILD_DIR}"
 }
 

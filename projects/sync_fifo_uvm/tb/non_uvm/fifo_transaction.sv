@@ -1,3 +1,5 @@
+// 一笔 FIFO 事务同时保存请求字段和被测设计返回的响应字段。
+// 同一个对象可在生成器、驱动器、监视器和记分板之间传递。
 class fifo_transaction #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -5,6 +7,7 @@ class fifo_transaction #(
 
     localparam int COUNT_WIDTH = (DEPTH >= 1) ? $clog2(DEPTH + 1) : 1;
     longint unsigned transaction_id;
+    // 以下三个随机字段描述本周期送给被测设计的操作。
     rand bit wr_en;
     rand bit [DATA_WIDTH-1:0] wr_data;
     rand bit rd_en;
@@ -13,6 +16,7 @@ class fifo_transaction #(
         wr_en || rd_en;
     }
 
+    // 读写各占四成，同时读写占两成，兼顾常规路径和并发路径。
     constraint operation_mix_c {
         {wr_en, rd_en} dist {
             2'b01 := 4,
@@ -21,6 +25,7 @@ class fifo_transaction #(
         };
     }
 
+    // 以下字段由监视器在时钟沿后采集。
     logic [DATA_WIDTH-1:0] rd_data;
     logic                  empty;
     logic                  full;

@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_ITEM_TEST_SV
 `define FIFO_UVM_ITEM_TEST_SV
 
+// 事务对象单元测试：检查工厂创建、字段自动化、复制、比较和随机约束。
 class fifo_uvm_item_test extends uvm_test;
 
     `uvm_component_utils(fifo_uvm_item_test)

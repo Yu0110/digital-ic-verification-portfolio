@@ -1,5 +1,7 @@
 `timescale 1ns/1ps
 
+// 非 UVM 分层集成测试：并行运行生成器、驱动器、监视器、参考模型和记分板。
+// 同一组边界激励还会由 SVA 检查器独立验证时序性质。
 module fifo_boundary_integration_tb #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -45,6 +47,7 @@ module fifo_boundary_integration_tb #(
         .data_count (fifo_bus.data_count)
     );
 
+    // 两条 mailbox 分别承载“待驱动事务”和“已采样事务”。
     mailbox #(tx_t)                           gen_to_drv;
     mailbox #(tx_t)                           mon_to_scoreboard;
     fifo_generator #(DATA_WIDTH, DEPTH)       generator;
@@ -56,6 +59,7 @@ module fifo_boundary_integration_tb #(
     always #5 clk = ~clk;
 
     initial begin : simulation_watchdog
+        // 防止组件握手异常导致自动回归永久等待。
         #10us;
         $fatal(1,
                "NON-UVM layered simulation timeout after 10 us: DATA_WIDTH=%0d DEPTH=%0d",
@@ -78,6 +82,7 @@ module fifo_boundary_integration_tb #(
         driver.connect_interface(fifo_bus);
         monitor.connect_interface(fifo_bus);
 
+        // 四个组件并行工作，事务数量是它们共同的结束条件。
         fork
             generator.run_boundary();
             driver.run(EXPECTED_TRANSACTIONS);
@@ -88,6 +93,7 @@ module fifo_boundary_integration_tb #(
         @(posedge clk);
         #1;
 
+        // 退出检查同时验证数据正确性、组件完整性、断言覆盖和模型排空。
         if ((generator.sent_count         != EXPECTED_TRANSACTIONS) ||
             (driver.received_count        != EXPECTED_TRANSACTIONS) ||
             (monitor.observed_count       != EXPECTED_TRANSACTIONS) ||

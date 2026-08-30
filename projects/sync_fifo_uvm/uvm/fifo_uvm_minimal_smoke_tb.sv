@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
 
+// 最小 UVM 顶层不实例化 DUT，只验证 UVM 库和 phase 调度能正常运行。
 module fifo_uvm_minimal_smoke_tb;
 
     import uvm_pkg::*;

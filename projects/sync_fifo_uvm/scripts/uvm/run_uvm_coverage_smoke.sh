@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 运行定向覆盖序列，并要求全部覆盖目标关闭。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 UVM_TESTNAME=fifo_uvm_coverage_test \

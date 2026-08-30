@@ -1,3 +1,5 @@
+// 参考模型使用 SystemVerilog 队列描述 FIFO 行为，不读取被测设计内部状态。
+// 这种实现独立性可避免设计和检查器复制同一个错误。
 class fifo_reference_model #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -27,10 +29,12 @@ class fifo_reference_model #(
 
         expected_tx = new();
 
+        // 接受条件只根据操作前的队列长度计算，与设计规格保持一致。
         count_before  = expected_queue.size();
         write_accepted = request_tx.wr_en && (count_before < DEPTH);
         read_accepted  = request_tx.rd_en && (count_before > 0);
 
+        // 同时读写时先弹出旧数据、再压入新数据，队列长度保持不变。
         if (read_accepted) begin
             expected_rd_data = expected_queue.pop_front();
         end

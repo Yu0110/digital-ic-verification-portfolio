@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 完整发布回归按“依赖、定向、分层、UVM、故障注入”的顺序执行。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 SUMMARY_FILE="${PROJECT_ROOT}/reports/full_verification_summary.md"
@@ -10,6 +11,7 @@ START_SECONDS="$(date +%s)"
 cd "${PROJECT_ROOT}"
 mkdir -p "${PROJECT_ROOT}/reports"
 
+# 未指定外部 UVM 时，安装并校验项目固定的依赖版本。
 if [[ -z "${UVM_HOME:-}" ]]; then
     "${SCRIPT_DIR}/setup_uvm.sh"
 else
@@ -28,6 +30,7 @@ ELAPSED_SECONDS=$((END_SECONDS - START_SECONDS))
 ICARUS_VERSION="$(iverilog -V 2>/dev/null | sed -n '1p')"
 VERILATOR_VERSION="$(verilator --version)"
 
+# 只有前面所有命令成功后才生成 PASS 汇总，避免留下过期的成功报告。
 {
     printf '# Full Verification Summary\n\n'
     printf -- '- 生成时间：%s\n' "$(date '+%Y-%m-%d %H:%M:%S %z')"

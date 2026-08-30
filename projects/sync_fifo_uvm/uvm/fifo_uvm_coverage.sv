@@ -1,6 +1,8 @@
 `ifndef FIFO_UVM_COVERAGE_SV
 `define FIFO_UVM_COVERAGE_SV
 
+// 功能覆盖率收集器：统计操作类型、操作前状态和操作后数据量。
+// 手工命中矩阵用于稳定的回归门槛，covergroup 用于标准覆盖率报告。
 class fifo_uvm_coverage #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -17,6 +19,7 @@ class fifo_uvm_coverage #(
     int unsigned operation_state_hits[3][3];
     int unsigned count_after_hits[DEPTH + 1];
 
+    // 交叉覆盖回答“每种操作是否在空、中间、满三种状态都发生过”。
     covergroup fifo_behavior_cg with function sample(
         bit [1:0] operation,
         int unsigned count_before_sample,
@@ -121,6 +124,7 @@ class fifo_uvm_coverage #(
 
         count_after = 32'(actual_tx.data_count);
 
+        // count_before 保存上一笔事务结束状态，即本笔事务开始状态。
         operation_index = operation_to_index(operation);
         state_index     = count_to_state_index(count_before);
 
@@ -144,6 +148,7 @@ class fifo_uvm_coverage #(
         count_after_hits[count_after]++;
         sample_count++;
 
+        // 更新后状态成为下一笔事务的操作前状态。
         count_before = count_after;
     endfunction
 
@@ -157,6 +162,7 @@ class fifo_uvm_coverage #(
         int unsigned total;
 
         total = 0;
+        // 所有操作/状态组合以及 0..DEPTH 每个数据量级别都必须命中。
         for (operation_index = 0; operation_index < 3; operation_index++) begin
             for (state_index = 0; state_index < 3; state_index++) begin
                 total += operation_state_hits[operation_index][state_index];

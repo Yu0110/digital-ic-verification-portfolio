@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_BASIC_SEQUENCE_SV
 `define FIFO_UVM_BASIC_SEQUENCE_SV
 
+// 基础激励序列：用五笔确定性事务检查 sequence 与 driver 的主通路。
 class fifo_uvm_basic_sequence #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -48,6 +49,7 @@ class fifo_uvm_basic_sequence #(
             `uvm_fatal("FIFO_SEQ_FACTORY", "factory returned a null sequence item")
         end
 
+        // start_item/finish_item 与 sequencer、driver 完成标准 UVM 握手。
         start_item(request);
 
         request.transaction_id = {32'b0, produced_count} + 64'd1;

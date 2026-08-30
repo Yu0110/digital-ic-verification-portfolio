@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_SMOKE_TEST_SV
 `define FIFO_UVM_SMOKE_TEST_SV
 
+// 最小 UVM 冒烟测试：确认工厂、phase 和 objection 基础机制可用。
 class fifo_uvm_smoke_test extends uvm_test;
 
     `uvm_component_utils(fifo_uvm_smoke_test)

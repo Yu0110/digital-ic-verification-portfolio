@@ -1,3 +1,4 @@
+// 统一编译 UVM 事务、组件、序列和测试，确保类型定义顺序稳定。
 package fifo_uvm_pkg;
 
     import uvm_pkg::*;

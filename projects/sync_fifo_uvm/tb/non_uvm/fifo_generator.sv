@@ -1,3 +1,5 @@
+// 生成器只负责创建事务，不接触接口信号。
+// 事务通过 mailbox 发送给驱动器，实现激励生成与时序驱动解耦。
 class fifo_generator #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -50,6 +52,7 @@ class fifo_generator #(
 
         tx = new();
 
+        // 随机化失败必须立即终止，不能把无效事务送入后续组件。
         if (tx.randomize() != 1) begin
             randomization_error_count++;
             $fatal(1,
@@ -104,6 +107,7 @@ class fifo_generator #(
     task automatic run_boundary();
         int unsigned index;
 
+        // 依次覆盖空读、空时并发、填满、满写、满时并发和多次指针回卷。
         send_next_request(1'b0, '0, 1'b1);
 
         send_next_request(1'b1, DATA_WIDTH'(8'ha0), 1'b1);
@@ -150,6 +154,7 @@ class fifo_generator #(
             send_random_request();
         end
 
+        // 随机激励结束后最多读取 DEPTH 次，确保参考模型最终排空。
         for (index = 0; index < DEPTH; index++) begin
             send_next_request(1'b0, '0, 1'b1);
         end

@@ -1,3 +1,5 @@
+// 记分板逐笔比较监视器的实际结果与独立参考模型的预测结果。
+// 除总错误数外还分别统计字段错误，便于回归失败后快速定位。
 class fifo_scoreboard #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -79,6 +81,7 @@ class fifo_scoreboard #(
             end else begin
                 compared_count++;
 
+                // 参考模型只使用本笔请求生成期望响应，不查看 DUT 内部信号。
                 expected_tx = reference_model.predict(actual_tx);
 
                 transaction_id_mismatch =
@@ -90,6 +93,7 @@ class fifo_scoreboard #(
                 empty_mismatch = (actual_tx.empty !== expected_tx.empty);
                 full_mismatch  = (actual_tx.full  !== expected_tx.full);
 
+                // 使用四态不等比较数据字段，X/Z 也必须作为验证失败处理。
                 mismatch = transaction_id_mismatch ||
                            sampled_mismatch ||
                            rd_data_mismatch ||

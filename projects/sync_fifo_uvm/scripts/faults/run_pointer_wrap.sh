@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 在深度 5 下移除显式回卷，验证记分板能发现非法指针路径。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 DATA_WIDTH=8
@@ -34,6 +35,7 @@ verilator --binary --sv --timing --assert \
     "${PROJECT_ROOT}/rtl/sync_fifo.sv" \
     "${PROJECT_ROOT}/tb/non_uvm/fifo_boundary_integration_tb.sv"
 
+# 被注入故障的仿真失败才是本测试的预期结果。
 set +e
 "${SIM_BINARY}" >"${SIM_LOG}" 2>&1
 SIM_STATUS=$?

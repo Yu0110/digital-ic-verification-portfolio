@@ -1,8 +1,8 @@
 # Full Verification Summary
 
-- 生成时间：2026-08-30 17:45:35 +0800
+- 生成时间：2026-08-31 01:31:41 +0800
 - 总结果：PASS（通过）
-- 总耗时：158 s
+- 总耗时：101 s
 - Icarus Verilog：Icarus Verilog version 13.0 (stable) (v13_0)
 - Verilator：Verilator 5.050 2026-07-01 rev vUNKNOWN-built20260701
 

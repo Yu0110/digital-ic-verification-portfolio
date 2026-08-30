@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_MONITOR_TEST_SV
 `define FIFO_UVM_MONITOR_TEST_SV
 
+// 主检查器核对 monitor 发布的事务内容、编号和采样时刻。
 class fifo_uvm_monitor_checker #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4,
@@ -212,6 +213,7 @@ class fifo_uvm_monitor_checker #(
 
 endclass
 
+// 第二订阅者保存事务句柄，用于验证 analysis port 的广播行为。
 class fifo_uvm_monitor_audit_tap #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4,
@@ -264,6 +266,7 @@ class fifo_uvm_monitor_audit_tap #(
 
 endclass
 
+// Monitor 集成测试：确认一份采样结果能无损到达两个独立订阅者。
 class fifo_uvm_monitor_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;

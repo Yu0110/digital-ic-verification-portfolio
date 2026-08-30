@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 对固定种子集合执行随机回归，并重放首个种子验证可复现性。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SIM_DIR="${SIM_DIR:-/tmp/fifo_uvm_smoke}"
 SIM_BINARY="${SIM_BINARY:-${SIM_DIR}/fifo_uvm_smoke_sim}"
@@ -58,6 +59,7 @@ for seed in "${SEEDS[@]}"; do
     SEEN_SEEDS="${SEEN_SEEDS}${seed} "
 done
 
+# 每个种子必须同时满足完成标记、覆盖率门槛和零 UVM 错误。
 validate_log() {
     local log_file="$1"
     local seed="$2"

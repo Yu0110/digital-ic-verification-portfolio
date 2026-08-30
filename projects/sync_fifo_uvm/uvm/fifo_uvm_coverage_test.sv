@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_COVERAGE_TEST_SV
 `define FIFO_UVM_COVERAGE_TEST_SV
 
+// 定向覆盖测试：使用 coverage sequence 关闭全部操作/状态交叉目标。
 class fifo_uvm_coverage_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;
@@ -110,6 +111,7 @@ class fifo_uvm_coverage_test extends uvm_test;
 
 endclass
 
+// 随机回归测试：核对随机事务数量、记分板结果、覆盖率门槛和最终排空。
 class fifo_uvm_random_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;
@@ -221,6 +223,7 @@ class fifo_uvm_random_test extends uvm_test;
 
 endclass
 
+// 预期负向测试：只送少量样本，证明覆盖率门槛不会被虚假满足。
 class fifo_uvm_coverage_fault_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;

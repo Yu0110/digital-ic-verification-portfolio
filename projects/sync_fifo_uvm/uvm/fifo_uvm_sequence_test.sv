@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_SEQUENCE_TEST_SV
 `define FIFO_UVM_SEQUENCE_TEST_SV
 
+// 测试专用 sink 模拟 driver，记录 sequencer 交付的每一笔事务。
 class fifo_uvm_sequence_sink #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4,
@@ -119,6 +120,7 @@ class fifo_uvm_sequence_sink #(
 
 endclass
 
+// Sequence 单元测试：验证五笔事务的数量、顺序、字段和握手延时。
 class fifo_uvm_sequence_test extends uvm_test;
 
     localparam int DATA_WIDTH = 8;

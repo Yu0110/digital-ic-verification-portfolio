@@ -1,3 +1,4 @@
+# 对外只暴露稳定的回归入口，具体编译参数由 scripts/ 中的脚本维护。
 .PHONY: help setup directed layered smoke regression faults verify fault-count fault-pointer fault-full
 
 help:

@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 安装固定提交的 UVM 源码，并验证来源、版本、文件完整性和工作区状态。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 UVM_DIR="${PROJECT_ROOT}/.deps/uvm"
@@ -41,7 +42,7 @@ else
     fi
 fi
 
-# Reuse a verified local checkout; fetch only when the pinned commit is absent.
+# 优先复用已验证的本地依赖，仅在缺少固定提交时访问网络。
 CURRENT_COMMIT="$(git -C "${UVM_DIR}" rev-parse HEAD 2>/dev/null || true)"
 if [[ "${CURRENT_COMMIT}" != "${UVM_COMMIT}" ]]; then
     git -C "${UVM_DIR}" fetch --depth 1 origin "${UVM_COMMIT}"

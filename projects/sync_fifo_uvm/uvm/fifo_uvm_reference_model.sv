@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_REFERENCE_MODEL_SV
 `define FIFO_UVM_REFERENCE_MODEL_SV
 
+// UVM 参考模型用软件队列独立预测 FIFO 行为，不访问 DUT 内部实现。
 class fifo_uvm_reference_model #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -11,7 +12,7 @@ class fifo_uvm_reference_model #(
 
     `uvm_object_param_utils(fifo_uvm_reference_model #(DATA_WIDTH, DEPTH))
 
-    // Queue state is independent of DUT pointers, flags, and storage.
+    // 队列状态与 DUT 的指针、标志和存储阵列完全独立。
     bit [DATA_WIDTH-1:0] expected_queue[$];
     logic [DATA_WIDTH-1:0] expected_rd_data;
     int unsigned prediction_count;
@@ -68,9 +69,11 @@ class fifo_uvm_reference_model #(
                                  DEPTH))
         end
 
+        // 接受条件按操作前状态计算，精确对应空时和满时的边界规格。
         write_accepted = observed_tx.wr_en && (count_before < DEPTH);
         read_accepted  = observed_tx.rd_en && (count_before > 0);
 
+        // 同时读写时先取出旧队首，再把新数据加入队尾。
         if (read_accepted) begin
             expected_rd_data = expected_queue.pop_front();
         end

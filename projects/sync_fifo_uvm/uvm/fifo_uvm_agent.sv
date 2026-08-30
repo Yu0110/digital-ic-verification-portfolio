@@ -1,6 +1,8 @@
 `ifndef FIFO_UVM_AGENT_SV
 `define FIFO_UVM_AGENT_SV
 
+// Agent 封装 FIFO 协议相关组件。
+// 主动模式包含 sequencer、driver、monitor；被动模式只保留 monitor。
 class fifo_uvm_agent #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -13,6 +15,7 @@ class fifo_uvm_agent #(
 
     `uvm_component_param_utils(fifo_uvm_agent #(DATA_WIDTH, DEPTH))
 
+    // sequencer 和 driver 只在主动模式创建，monitor 在两种模式下都存在。
     sequencer_t sequencer;
     driver_t    driver;
 
@@ -33,6 +36,7 @@ class fifo_uvm_agent #(
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
 
+        // 监视能力与是否主动驱动无关，因此始终创建 monitor。
         monitor = monitor_t::type_id::create("monitor", this);
         if (monitor == null) begin
             `uvm_fatal("FIFO_AGENT_NO_MON",
@@ -40,6 +44,7 @@ class fifo_uvm_agent #(
             return;
         end
 
+        // 主动 agent 负责产生并驱动激励，被动 agent 只观察已有总线活动。
         if (get_is_active() == UVM_ACTIVE) begin
             sequencer = sequencer_t::type_id::create("sequencer", this);
             driver    = driver_t::type_id::create("driver", this);
@@ -63,10 +68,12 @@ class fifo_uvm_agent #(
     virtual function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
 
+        // 事务驱动通路只在主动模式连接。
         if (get_is_active() == UVM_ACTIVE) begin
             driver.seq_item_port.connect(sequencer.seq_item_export);
         end
 
+        // monitor 的采样结果经 agent 公共 analysis port 向环境继续广播。
         monitor.observed_ap.connect(observed_ap);
     endfunction
 
@@ -99,6 +106,7 @@ class fifo_uvm_agent #(
             end
         end
 
+        // 展开结束后检查连接数量，避免 analysis port 静默丢失订阅者。
         public_subscriber_count  = observed_ap.size();
         monitor_subscriber_count = monitor.observed_ap.size();
 

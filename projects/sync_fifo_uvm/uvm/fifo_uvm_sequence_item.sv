@@ -1,6 +1,8 @@
 `ifndef FIFO_UVM_SEQUENCE_ITEM_SV
 `define FIFO_UVM_SEQUENCE_ITEM_SV
 
+// UVM 事务对象：随机字段表示请求，普通字段保存监视器采集的响应。
+// 字段注册后可直接使用 UVM 工厂、复制、比较和打印机制。
 class fifo_uvm_sequence_item #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -17,6 +19,7 @@ class fifo_uvm_sequence_item #(
     logic [COUNT_WIDTH-1:0]    data_count;
     bit                        sampled;
 
+    // 本项目不生成空闲事务，所有 sequence item 都包含读或写请求。
     constraint active_operation_c {
         wr_en || rd_en;
     }
@@ -31,6 +34,7 @@ class fifo_uvm_sequence_item #(
 
     /* verilator lint_off WIDTHTRUNC */
     /* verilator lint_off WIDTHEXPAND */
+    // 将参与自动化操作的字段注册到 UVM 工厂。
     `uvm_object_param_utils_begin(fifo_uvm_sequence_item #(DATA_WIDTH, DEPTH))
         `uvm_field_int(transaction_id, UVM_ALL_ON)
         `uvm_field_int(wr_en,          UVM_ALL_ON)

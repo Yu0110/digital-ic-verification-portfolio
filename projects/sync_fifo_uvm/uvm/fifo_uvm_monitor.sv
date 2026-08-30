@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_MONITOR_SV
 `define FIFO_UVM_MONITOR_SV
 
+// UVM 监视器：被动采样接口，并通过 analysis port 广播完整事务。
 class fifo_uvm_monitor #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -37,6 +38,7 @@ class fifo_uvm_monitor #(
     virtual function void end_of_elaboration_phase(uvm_phase phase);
         super.end_of_elaboration_phase(phase);
 
+        // 没有订阅者意味着采样结果无人检查，应在仿真开始前直接报错。
         if (observed_ap.size() == 0) begin
             `uvm_fatal("FIFO_MON_NO_SUBSCRIBER",
                        "fifo_uvm_monitor analysis port has no subscriber")
@@ -53,8 +55,8 @@ class fifo_uvm_monitor #(
         forever begin
             @(vif.mon_cb);
 
-            // Tool compatibility: version 5.050 may expose stale virtual
-            // clocking-block inputs, so sample directly after the event.
+            // 工具兼容说明：在 Verilator 5.050 中，虚拟 clocking block
+            // 输入可能滞后一拍，因此等待 mon_cb 事件后直接读取接口信号。
             if ($isunknown({vif.rst_n,
                             vif.wr_en,
                             vif.wr_data,
@@ -105,6 +107,7 @@ class fifo_uvm_monitor #(
                                     observed_tx.full),
                           UVM_LOW)
 
+                // analysis port 会把同一笔只读事务广播给记分板和覆盖率收集器。
                 observed_ap.write(observed_tx);
             end
         end

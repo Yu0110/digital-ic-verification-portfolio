@@ -1,3 +1,5 @@
+// SVA 检查器并行验证五类关键边界行为，同时记录每条性质是否真正触发。
+// 只有“零失败且全部触发”才能证明本次回归有效覆盖了这些性质。
 module fifo_sva_checker #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -39,6 +41,7 @@ module fifo_sva_checker #(
         full_simultaneous_hit_count   = 0;
     end
 
+    // 命中计数用于区分“断言通过”和“断言从未被激励触发”。
     always @(posedge clk) begin
         if (rst_n) begin
             if (wr_en && rd_en && !empty && !full) begin
@@ -63,6 +66,7 @@ module fifo_sva_checker #(
         end
     end
 
+    // 非空非满时同时读写，两项操作都成功，数据量应保持不变。
     property p_middle_simultaneous_count_holds;
         @(posedge clk) disable iff (!rst_n)
         (wr_en && rd_en && !empty && !full)
@@ -78,6 +82,7 @@ module fifo_sva_checker #(
                      $past(data_count), data_count);
         end
 
+    // 空读被拒绝，数量、空标志和读数据都应保持。
     property p_empty_read_holds_state;
         @(posedge clk) disable iff (!rst_n)
         (!wr_en && rd_en && empty)
@@ -95,6 +100,7 @@ module fifo_sva_checker #(
                      $past(rd_data), rd_data, data_count, empty);
         end
 
+    // 满写被拒绝，不能改变有效数据数量或读数据输出。
     property p_full_write_holds_state;
         @(posedge clk) disable iff (!rst_n)
         (wr_en && !rd_en && full)
@@ -112,6 +118,7 @@ module fifo_sva_checker #(
                      $past(data_count), data_count, full);
         end
 
+    // 空状态同时读写时只接受写入，因此下一周期数量为 1。
     property p_empty_simultaneous_accepts_write_only;
         @(posedge clk) disable iff (!rst_n)
         (wr_en && rd_en && empty)
@@ -128,6 +135,7 @@ module fifo_sva_checker #(
                      data_count, $past(rd_data), rd_data);
         end
 
+    // 满状态同时读写时只接受读取，因此下一周期数量减一。
     property p_full_simultaneous_accepts_read_only;
         @(posedge clk) disable iff (!rst_n)
         (wr_en && rd_en && full)

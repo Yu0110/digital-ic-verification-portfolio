@@ -1,3 +1,5 @@
+// 监视器被动采样接口，将每个有效周期转换回事务对象。
+// 采样结果分别送往记分板和可选覆盖率收集器。
 class fifo_monitor #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -45,6 +47,7 @@ class fifo_monitor #(
         while (observed_count < expected_count) begin
             @(vif.mon_cb);
 
+            // 复位期间和完全空闲的周期不形成可比较事务。
             if (vif.mon_cb.rst_n &&
                 (vif.mon_cb.wr_en || vif.mon_cb.rd_en)) begin
 
@@ -65,6 +68,7 @@ class fifo_monitor #(
                 observed_count++;
 
                 observed_tx.print("MONITOR_TX");
+                // 两个 mailbox 收到同一份已完成采样的事务快照。
                 observed_outbox.put(observed_tx);
 
                 if (coverage_connected) begin

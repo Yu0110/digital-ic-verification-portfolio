@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 注入“同时读写时数量错误加一”，测试平台必须报告预期计数不匹配。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 BUILD_DIR="${PROJECT_ROOT}/build/faults/count_update"
@@ -19,6 +20,7 @@ iverilog -g2012 -Wall \
     "${PROJECT_ROOT}/rtl/sync_fifo.sv" \
     "${PROJECT_ROOT}/tb/sync_fifo_tb.sv"
 
+# 故障仿真预期返回非零，因此临时关闭 shell 的立即退出行为。
 set +e
 (
     cd "${BUILD_DIR}"

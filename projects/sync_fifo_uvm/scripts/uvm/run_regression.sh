@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 统一调度 11 组正向测试和 4 组预期负向测试，并生成分组报告。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 cd "${PROJECT_ROOT}"
@@ -25,7 +26,7 @@ SUMMARY_FILE="${PROJECT_ROOT}/reports/uvm_regression_summary.md"
 mkdir -p "${REGRESSION_LOG_DIR}" "${REGRESSION_SIM_DIR}" "${RANDOM_LOG_DIR}" "${PROJECT_ROOT}/reports"
 : > "${SUMMARY_ROWS}"
 
-# Arguments: index, slug, title, positive|negative, runner, completion marker.
+# 参数依次为：序号、短名称、标题、正/负向类型、子脚本、完成标记。
 run_group() {
     local group_index="$1"
     local group_slug="$2"

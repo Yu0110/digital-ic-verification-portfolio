@@ -1,3 +1,4 @@
+// 驱动器从 mailbox 取出事务，并按接口 clocking block 规定的时刻施加请求。
 class fifo_driver #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -13,6 +14,7 @@ class fifo_driver #(
     int unsigned received_count;
     int unsigned error_count;
 
+    // 仅接收模式用于隔离检查 mailbox 通信，不会驱动被测设计。
     tx_t receive_only_history[$];
 
     function new(mailbox #(tx_t) mailbox_handle);
@@ -50,6 +52,7 @@ class fifo_driver #(
     endtask
 
     task automatic reset_dut();
+        // 先制造一次复位下降沿，再在时钟下降沿释放，避免靠近采样沿。
         vif.rst_n   <= 1'b1;
         vif.wr_en   <= 1'b0;
         vif.wr_data <= '0;
@@ -66,6 +69,7 @@ class fifo_driver #(
     endtask
 
     task automatic drive_transaction(input tx_t tx);
+        // 下降沿驱动请求，上升沿等待被测设计完成一次状态更新。
         @(vif.drv_cb);
 
         vif.drv_cb.wr_en   <= tx.wr_en;
@@ -104,6 +108,7 @@ class fifo_driver #(
             end
         end
 
+        // 所有事务结束后撤销请求，避免最后一笔操作被重复执行。
         @(vif.drv_cb);
         vif.drv_cb.wr_en   <= 1'b0;
         vif.drv_cb.wr_data <= '0;

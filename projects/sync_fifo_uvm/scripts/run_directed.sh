@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 使用 Icarus Verilog 对五组参数执行同一套自检式定向测试。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 BUILD_DIR="${BUILD_DIR:-${PROJECT_ROOT}/build/directed}"
@@ -41,6 +42,7 @@ run_config() {
         exit "${simulation_status}"
     fi
 
+    # 退出码和唯一完成标记必须同时正确，防止提前结束被误判为通过。
     if [[ "$(grep -Fxc 'ALL DIRECTED TESTS PASSED' "${sim_log}")" -ne 1 ]]; then
         printf 'DIRECTED REGRESSION FAIL: completion marker missing for %s.\n' \
             "${name}" >&2

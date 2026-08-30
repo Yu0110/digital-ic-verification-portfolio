@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
 
+// 完整 UVM 仿真顶层：实例化接口、DUT、SVA，并把虚接口注入测试环境。
 module fifo_uvm_smoke_tb;
 
     localparam int DATA_WIDTH = 8;

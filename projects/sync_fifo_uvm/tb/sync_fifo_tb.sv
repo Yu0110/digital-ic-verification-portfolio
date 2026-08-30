@@ -1,5 +1,7 @@
 `timescale 1ns/1ps
 
+// 自检式定向测试平台：使用独立软件队列在线计算期望结果。
+// 同一份测试可通过参数覆盖不同数据位宽和非 2 次幂深度。
 module sync_fifo_tb #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -17,6 +19,7 @@ module sync_fifo_tb #(
     logic                         empty;
     logic                         full;
     logic [COUNT_WIDTH-1:0]       data_count;
+    // 期望队列只描述规格行为，不读取 DUT 的 memory 或指针。
     logic [DATA_WIDTH-1:0] expected_queue[$];
     logic [DATA_WIDTH-1:0] expected_rd_data;
     int test_count;
@@ -45,12 +48,14 @@ module sync_fifo_tb #(
     always #5 clk = ~clk;
 
     initial begin : watchdog
+        // 被测设计或测试任务卡住时主动结束，保证回归不会无限等待。
         repeat (WATCHDOG_CYCLES) @(posedge clk);
         $fatal(1,
                "sync_fifo_tb timeout after %0d clock cycles (DATA_WIDTH=%0d DEPTH=%0d)",
                WATCHDOG_CYCLES, DATA_WIDTH, DEPTH);
     end
 
+    // 在状态更新后的下降沿检查全局不变量，避开上升沿竞争。
     always @(negedge clk) begin
         if (assertions_enabled && rst_n) begin
             assert (data_count <= COUNT_WIDTH'(DEPTH))
@@ -85,6 +90,7 @@ module sync_fifo_tb #(
     endfunction
 
     function automatic logic [DATA_WIDTH-1:0] make_high_data(input int value);
+        // 强制最高位为 1，用来证明 DATA_WIDTH 参数路径没有被截成 8 位。
         logic [DATA_WIDTH-1:0] result;
         begin
             result = DATA_WIDTH'(value);
@@ -109,6 +115,7 @@ module sync_fifo_tb #(
         logic expected_full;
         logic state_ok;
         begin
+            // 所有输出都由软件队列当前状态独立推导。
             expected_size  = expected_queue.size();
             expected_empty = (expected_size == 0);
             expected_full  = (expected_size == DEPTH);
@@ -158,6 +165,7 @@ module sync_fifo_tb #(
         logic expected_write_accept;
         logic expected_read_accept;
         begin
+            // 下降沿施加请求，上升沿由 DUT 接受，再延迟 1 ns 比较结果。
             @(negedge clk);
             wr_en   = request_write;
             wr_data = write_value;
@@ -169,6 +177,7 @@ module sync_fifo_tb #(
             expected_read_accept  = request_read &&
                                     (expected_queue.size() > 0);
 
+            // 同时读写时先弹出旧队首，再将新数据压入队尾。
             if (expected_read_accept) begin
                 expected_rd_data = expected_queue.pop_front();
             end
@@ -196,6 +205,7 @@ module sync_fifo_tb #(
             wr_data = make_high_data(int'(8'h5a));
             rd_en   = request_read_during_reset;
 
+            // 在两个时钟沿之间拉低复位，验证异步复位无需等待上升沿。
             #2;
             rst_n = 1'b0;
 
@@ -266,6 +276,7 @@ module sync_fifo_tb #(
         $dumpfile(vcd_file);
         $dumpvars(0, sync_fifo_tb);
 
+        // 测试顺序按规格中的复位、基本操作、边界、回卷和参数化组织。
         start_test("TEST-001/002 asynchronous reset and reset-time requests");
         apply_async_reset(1'b1, 1'b1, "initial reset");
 

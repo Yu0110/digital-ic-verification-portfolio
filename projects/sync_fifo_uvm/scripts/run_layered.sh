@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+# 使用 Verilator 运行非 UVM 分层环境，并覆盖多种位宽和深度。
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 BUILD_ROOT="${BUILD_ROOT:-${PROJECT_ROOT}/build/layered}"
@@ -46,6 +47,7 @@ run_config() {
 
     "${sim_binary}" 2>&1 | tee "${sim_log}"
 
+    # 每组参数都有精确完成标记，避免读取到其他配置遗留的日志。
     if [[ "$(grep -Fc "${required_marker}" "${sim_log}")" -ne 1 ]]; then
         printf 'LAYERED REGRESSION FAIL: completion marker missing for %s.\n' \
             "${label}" >&2

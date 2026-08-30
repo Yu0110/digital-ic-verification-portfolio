@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_ENVIRONMENT_SV
 `define FIFO_UVM_ENVIRONMENT_SV
 
+// Environment 组装 agent、scoreboard 和 coverage collector，形成完整验证闭环。
 class fifo_uvm_environment #(
     parameter int DATA_WIDTH = 8,
     parameter int DEPTH      = 4
@@ -46,6 +47,7 @@ class fifo_uvm_environment #(
     virtual function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
 
+        // monitor 的同一份广播同时送往正确性检查和覆盖率统计。
         agent.observed_ap.connect(scoreboard.analysis_export);
 
         agent.observed_ap.connect(coverage_collector.analysis_export);

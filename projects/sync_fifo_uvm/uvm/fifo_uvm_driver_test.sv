@@ -1,6 +1,7 @@
 `ifndef FIFO_UVM_DRIVER_TEST_SV
 `define FIFO_UVM_DRIVER_TEST_SV
 
+// Driver 集成测试：把真实 DUT 接入驱动器，并逐周期核对复位和五笔操作。
 class fifo_uvm_driver_test extends uvm_test;
 
     localparam int DATA_WIDTH  = 8;

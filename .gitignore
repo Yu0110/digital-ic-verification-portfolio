@@ -7,6 +7,8 @@
 *.ucdb
 build/
 sim_build/
+obj_dir/
+.deps/
 coverage/
 work/
 __pycache__/
@@ -18,3 +20,4 @@ __pycache__/
 !.env.example
 *.pem
 *.key
+*.dat

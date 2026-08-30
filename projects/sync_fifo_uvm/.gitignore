@@ -1,0 +1,16 @@
+# Third-party dependency installed by scripts/setup_uvm.sh.
+.deps/
+
+# Simulation and build outputs.
+build/
+*.out
+*.log
+*.vcd
+*.fst
+*.dat
+obj_dir/
+
+# Local editor and operating-system files.
+.DS_Store
+.vscode/
+.idea/

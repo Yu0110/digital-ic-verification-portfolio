@@ -9,7 +9,7 @@
 | 项目 | 验证重点 | 已发布证据 | 状态 |
 |---|---|---|---|
 | [参数化同步 FIFO 与 UVM 验证](projects/sync_fifo_uvm/README.md) | 参数化设计、分层测试平台、SVA、UVM、约束随机、功能覆盖率、故障注入 | 5 种参数配置、539 次定向检查、15/15 组 UVM 回归、20 个随机种子、4,080 次比较、3/3 类故障检出 | 已完成 |
-| [四请求者轮询仲裁器](projects/round_robin_arbiter/README.md) | 公平仲裁、状态更新、边界检查、自检式测试平台 | 21 项定向检查、错误注入与根因分析 | 已完成 |
+| [四请求者轮询仲裁器](projects/round_robin_arbiter/README.md) | 黑盒参考模型、穷举状态验证、有界公平性、SVA、故障注入 | 64/64 状态/请求组合、60/60 公平性场景、1,712 次比较、4 条 SVA、1/1 故障检出 | 已完成 |
 | APB-UART UVM 验证 | 寄存器接口、串口收发、协议检查与覆盖率 | 规格确定后发布 | 规划中 |
 
 FIFO = First In First Out，先进先出队列。
@@ -43,15 +43,17 @@ UART = Universal Asynchronous Receiver/Transmitter，通用异步收发器。
 ./scripts/run_all.sh
 ```
 
-运行同步 FIFO 的完整可发布回归，包括 UVM、约束随机和故障注入：
+运行两个项目的完整可发布回归，包括断言、约束随机和故障注入：
 
 ```bash
 ./scripts/run_all.sh --full
 ```
 
-也可以只进入单个项目运行：
+也可以只运行单个项目：
 
 ```bash
+make -C projects/round_robin_arbiter directed
+make -C projects/round_robin_arbiter verify
 make -C projects/sync_fifo_uvm directed
 make -C projects/sync_fifo_uvm verify
 ```

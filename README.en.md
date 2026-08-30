@@ -9,7 +9,7 @@ This repository presents reproducible digital Integrated Circuit (IC, 集成电�
 | Project | Verification focus | Published evidence | Status |
 |---|---|---|---|
 | [Parameterized synchronous FIFO with UVM verification](projects/sync_fifo_uvm/README.en.md) | Parameterization, layered testbench, SVA, UVM, constrained random testing, functional coverage, and fault injection | 5 configurations, 539 directed checks, 15/15 UVM regression groups, 20 random seeds, 4,080 comparisons, and 3/3 injected faults detected | Complete |
-| [Four-requester round-robin arbiter](projects/round_robin_arbiter/README.md) | Fair arbitration, state transitions, boundary checks, and a self-checking testbench | 21 directed checks plus fault injection and root-cause analysis | Complete |
+| [Four-requester round-robin arbiter](projects/round_robin_arbiter/README.en.md) | Black-box reference model, exhaustive state verification, bounded fairness, SVA, and fault injection | 64/64 state/request combinations, 60/60 fairness scenarios, 1,712 comparisons, 4 SVA properties, and 1/1 fault detected | Complete |
 | APB-UART UVM verification | Register interface, serial transmit/receive behavior, protocol checks, and coverage | To be published after the specification is finalized | Planned |
 
 FIFO = First In First Out (先进先出队列).
@@ -44,15 +44,17 @@ Run the quick checks for both published projects:
 ./scripts/run_all.sh
 ```
 
-Run the full publishable FIFO regression, including UVM, constrained random testing, and fault injection:
+Run the complete publishable suites for both projects, including assertions, constrained random testing, and fault injection:
 
 ```bash
 ./scripts/run_all.sh --full
 ```
 
-Individual FIFO targets are also available:
+Individual project targets are also available:
 
 ```bash
+make -C projects/round_robin_arbiter directed
+make -C projects/round_robin_arbiter verify
 make -C projects/sync_fifo_uvm directed
 make -C projects/sync_fifo_uvm verify
 ```

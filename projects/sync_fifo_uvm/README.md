@@ -110,7 +110,7 @@ sync_fifo_uvm/
 └── README.en.md     English documentation
 ```
 
-建议的最短阅读路径见 [代码阅读指南](docs/reading_order.md)。
+第一次从头学习本项目，请使用 [同步 FIFO 项目从头到尾自学与运行计划](docs/self_study_walkthrough.md)。快速复查时再使用 [代码阅读指南](docs/reading_order.md)。
 
 ## 故障注入
 

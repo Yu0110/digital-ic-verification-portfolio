@@ -1,5 +1,7 @@
 # Code Guide
 
+中文完整自学路线、逐步运行命令和阶段检查表见 [同步 FIFO 项目从头到尾自学与运行计划](self_study_walkthrough.md)。
+
 ## Design
 
 1. [Specification](specification.md)

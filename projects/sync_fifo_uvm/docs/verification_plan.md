@@ -1,43 +1,51 @@
-# Verification Plan
+# 验证计划
 
-## Objectives
+**简体中文** | [English](verification_plan.en.md)
 
-1. Preserve write order across reads.
-2. Enforce empty-read, full-write, and simultaneous-operation rules.
-3. Keep `data_count`, `empty`, and `full` consistent.
-4. Wrap pointers correctly for power-of-two and non-power-of-two depths.
-5. Apply asynchronous reset independently of the clock.
-6. Detect controlled design and verification-environment faults.
+## 验证目标
 
-## Risk Matrix
+1. 读取时保持写入顺序；
+2. 正确执行空读、满写和同时操作规则；
+3. 保证 `data_count`、`empty` 和 `full` 始终一致；
+4. 在 2 的整数次幂和非 2 的整数次幂深度下正确回卷指针；
+5. 异步复位不依赖时钟即可生效；
+6. 能够检出受控的设计故障和验证环境故障。
 
-| Risk | Detection strategy |
+## 风险矩阵
+
+| 风险 | 检测策略 |
 |---|---|
-| Data reordering or corruption | Independent queue model and scoreboard |
-| Full write overwrites valid data | Reject write, then drain and compare all entries |
-| Empty read advances state | Repeated empty reads followed by write/read |
-| Pointer enters an invalid address | Multi-wrap tests with `DEPTH=3, 5, 6` |
-| Simultaneous operation updates count incorrectly | Directed boundary cases and assertions |
-| Reference model copies design behavior | Independent parameterized model contract test |
-| Monitor drops or duplicates transactions | End-to-end transaction counters |
-| Coverage misses planned behavior | Functional coverage closure gate |
-| Test exits before completion | Unique completion markers and watchdogs |
+| 数据乱序或损坏 | 独立队列模型和记分板 |
+| 满状态写入覆盖有效数据 | 拒绝写入后排空并比较全部数据 |
+| 空读错误推进状态 | 连续空读后执行一次正常写读 |
+| 指针进入非法地址 | 在 `DEPTH=3、5、6` 下执行多次回卷 |
+| 同时操作错误更新数量 | 定向边界场景和断言 |
+| 参考模型复制设计行为 | 独立参数化参考模型合同测试 |
+| Monitor 丢失或重复事务 | 端到端事务计数 |
+| 覆盖率遗漏计划行为 | 功能覆盖率闭合门槛 |
+| 测试尚未完成便退出 | 唯一完成标记和超时看门狗 |
 
-## Verification Layers
+## 验证层次
 
-- Parameterized directed self-checking tests.
-- Layered non-UVM boundary tests.
-- Five temporal assertions.
-- UVM component and topology checks.
-- Directed coverage closure.
-- Fixed-seed constrained-random regression and replay.
-- Design and verification-environment fault injection.
+- 参数化定向自检式测试；
+- 非 UVM 分层边界测试；
+- 五条跨周期断言；
+- UVM 组件和拓扑检查；
+- 定向功能覆盖率闭合；
+- 固定种子的约束随机回归和重放；
+- 设计与验证环境故障注入。
 
-## Exit Criteria
+## 退出标准
 
-- 5/5 parameterized directed configurations pass.
-- 5/5 layered configurations pass with all assertions exercised.
-- Directed UVM coverage reaches 100%.
-- 20 fixed random seeds pass and the first seed replays identically.
-- 11 positive and 4 expected-negative UVM groups pass their exact criteria.
-- All three controlled design faults are detected.
+- 5/5 种参数化定向配置通过；
+- 5/5 种分层配置通过，全部断言均被触发；
+- 定向 UVM 功能覆盖率达到 100%；
+- 20 个固定随机种子通过，首个种子重放结果一致；
+- 11 组正向测试和 4 组预期负向测试满足各自精确判定条件；
+- 三类受控设计故障全部被检出。
+
+FIFO = First In First Out，先进先出队列。
+
+UVM = Universal Verification Methodology，通用验证方法学。
+
+SVA = SystemVerilog Assertions，SystemVerilog 断言。

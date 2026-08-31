@@ -30,7 +30,7 @@ A parameterized synchronous FIFO (First In First Out) implemented in SystemVeril
 
 `rd_data` is registered. It changes only after a successful read or reset. Reset is asynchronous and active low. The storage array is not reset because the pointers and `data_count` define data validity.
 
-See the complete [design specification](docs/specification.md).
+See the complete [design specification](docs/specification.en.md).
 
 ## Verification Architecture
 
@@ -50,7 +50,7 @@ flowchart LR
 
 The monitor publishes observed transactions to both the scoreboard and coverage collector. The scoreboard predicts expected behavior through an independent software queue. Assertions check temporal interface rules in parallel.
 
-See the [verification architecture](docs/architecture.md) and [verification plan](docs/verification_plan.md).
+See the [verification architecture](docs/architecture.en.md) and [verification plan](docs/verification_plan.en.md).
 
 ## Regression Results
 
@@ -110,7 +110,7 @@ sync_fifo_uvm/
 └── README.en.md     English documentation
 ```
 
-The shortest review path is documented in the [code guide](docs/reading_order.md).
+For a complete first pass, use the [self-study and execution walkthrough](docs/self_study_walkthrough.en.md). For a quick review, use the [code guide](docs/reading_order.en.md).
 
 ## Fault Injection
 

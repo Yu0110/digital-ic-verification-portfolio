@@ -1,50 +1,56 @@
-# Verification Results
+# 验证结果
 
-## Parameterized Directed Regression
+**简体中文** | [English](results.en.md)
 
-| Configuration | Checks | Errors |
+## 参数化定向回归
+
+| 配置 | 检查次数 | 错误数 |
 |---|---:|---:|
 | `DATA_WIDTH=8, DEPTH=3` | 91 | 0 |
 | `DATA_WIDTH=8, DEPTH=4` | 103 | 0 |
 | `DATA_WIDTH=16, DEPTH=4` | 103 | 0 |
 | `DATA_WIDTH=8, DEPTH=5` | 115 | 0 |
 | `DATA_WIDTH=8, DEPTH=6` | 127 | 0 |
-| Total | 539 | 0 |
+| 总计 | 539 | 0 |
 
-The layered regression completed 150 independent scoreboard comparisons. Every configuration exercised all five temporal assertions with zero failures.
+非 UVM 分层回归完成 150 次独立记分板比较。五种配置均触发全部五条时序断言，断言失败数为 0。
 
-## Directed UVM Coverage
+## 定向 UVM 功能覆盖率
 
-- Transactions compared: 16/16
-- Read hits for empty/middle/full states: `2/4/1`
-- Write hits for empty/middle/full states: `1/4/1`
-- Simultaneous-operation hits for empty/middle/full states: `1/1/1`
-- Post-operation count hits for `0..4`: `4/4/2/3/3`
-- Functional coverage: 100%
-- Assertion failures: 0
+- 比较事务：16/16；
+- 空、中间、满状态的读取命中：`2/4/1`；
+- 空、中间、满状态的写入命中：`1/4/1`；
+- 空、中间、满状态的同时操作命中：`1/1/1`；
+- 操作后数量 `0..4` 命中：`4/4/2/3/3`；
+- 功能覆盖率：100%；
+- 断言失败：0。
 
-## Constrained-Random Regression
+## 约束随机回归
 
-- Fixed seeds: 20
-- Random transactions per seed: 200
-- Drain transactions per seed: 4
-- Total comparisons: 4,080
-- Random operation distribution: 1,558 reads, 1,621 writes, 821 simultaneous operations
-- Coverage per seed: 100%
-- Seed `20260801` replay digest: `4fe9e16e7caf8a3d`
+- 固定随机种子：20 个；
+- 每个种子的随机事务：200 笔；
+- 每个种子的排空事务：4 笔；
+- 总比较次数：4,080；
+- 随机操作分布：1,558 次读取、1,621 次写入、821 次同时操作；
+- 每个种子的功能覆盖率：100%；
+- 种子 `20260801` 重放摘要：`4fe9e16e7caf8a3d`。
 
-## UVM Regression
+## UVM 回归
 
-- Positive groups: 11/11
-- Expected-negative groups: 4/4
-- Total: 15/15
+- 正向测试：11/11；
+- 预期负向测试：4/4；
+- 总计：15/15。
 
-An expected-negative pass means the environment detected the injected fault with the expected severity and count.
+预期负向测试通过，表示验证环境以预期的严重级别和数量准确检出了故意注入的错误。
 
-## Fault Injection
+## 故障注入
 
-| Mutation | Checker | Result |
+| 变异 | 检查器 | 结果 |
 |---|---|---|
-| Incorrect simultaneous count update | Directed state check | Detected |
-| Invalid non-power-of-two pointer wrap | Reference model and scoreboard | Detected |
-| Full-write data overwrite | Drain-and-compare sequence | Detected |
+| 同时读写时错误更新数据量 | 定向状态检查 | 已检出 |
+| 非 2 的整数次幂深度下指针非法回卷 | 参考模型和记分板 | 已检出 |
+| 满状态写入覆盖有效数据 | 排空并比较序列 | 已检出 |
+
+UVM = Universal Verification Methodology，通用验证方法学。
+
+FIFO = First In First Out，先进先出队列。

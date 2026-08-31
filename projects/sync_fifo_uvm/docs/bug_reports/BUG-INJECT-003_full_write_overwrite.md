@@ -1,20 +1,22 @@
-# BUG-INJECT-003: Data Overwrite on Rejected Full Write
+# BUG-INJECT-003：满状态拒绝写入后数据被覆盖
 
-## Summary
+**简体中文** | [English](BUG-INJECT-003_full_write_overwrite.en.md)
 
-A full FIFO must reject a write without changing memory. The injected defect writes new data at `wr_ptr` while leaving pointers, count, and flags unchanged. The corruption becomes visible only on a later read.
+## 摘要
 
-## Reproduction
+FIFO 已满时必须拒绝写入，并且不能修改存储阵列。注入的故障在保持指针、数量和状态标志不变的同时，仍然把新数据写入 `wr_ptr`。数据损坏要到后续读取时才会暴露。
+
+## 复现方法
 
 ```bash
 ./scripts/faults/run_full_write_overwrite.sh
 ```
 
-The script compiles `rtl/sync_fifo.sv` with `FIFO_INJECT_BUG_003` and runs the non-power-of-two boundary sequence at `DEPTH=5`.
+脚本使用 `FIFO_INJECT_BUG_003` 编译 `rtl/sync_fifo.sv`，并在 `DEPTH=5` 下运行非 2 的整数次幂边界序列。
 
-## Failure Signature
+## 失败特征
 
-The FIFO is filled with `40, 41, 42, 43, 44`. A rejected write of `EE` overwrites `40`. The write cycle appears correct because `data_count` and `full` hold; the next read exposes the corruption.
+FIFO 先被 `40, 41, 42, 43, 44` 填满。随后本应被拒绝的 `EE` 覆盖了 `40`。写入周期表面上仍然正确，因为 `data_count` 和 `full` 保持不变；下一次读取才暴露数据损坏。
 
 ```text
 SCOREBOARD ERROR comparison=10
@@ -24,9 +26,9 @@ EXPECTED_TX rd_data=0x40 count=4 empty=0 full=0
 BUG-INJECT-003 PASS: scoreboard detected the intentional full-write data overwrite.
 ```
 
-## Root Cause
+## 根因
 
-The storage array was updated when `write_accept` was false. Memory and the write pointer must change only in the accepted-write branch:
+当 `write_accept` 为假时，存储阵列仍被错误更新。存储阵列和写指针只能在写入被接受的分支中改变：
 
 ```systemverilog
 if (write_accept) begin
@@ -35,10 +37,12 @@ if (write_accept) begin
 end
 ```
 
-## Regression Coverage
+## 防回归覆盖
 
-- Fill to full
-- Rejected write
-- Complete drain and data-order comparison
-- Count and flag checks
-- Stable single-mismatch fault signature
+- 填满 FIFO；
+- 拒绝满状态写入；
+- 完整排空并比较数据顺序；
+- 检查数量和状态标志；
+- 保持稳定、单一的不匹配特征。
+
+FIFO = First In First Out，先进先出队列。

@@ -1,64 +1,70 @@
-# Test Matrix
+# 测试矩阵
 
-## Functional Scenarios
+**简体中文** | [English](test_matrix.en.md)
 
-| Scenario | Checks |
+## 功能场景
+
+| 场景 | 检查内容 |
 |---|---|
-| Asynchronous reset | Pointers, count, output data, and flags |
-| Single write/read | Count transition and returned data |
-| Ordered stream | First-in-first-out ordering |
-| Repeated empty read | State and `rd_data` hold |
-| Fill and drain | Every count level and boundary flag |
-| Rejected full write | Existing data remains intact |
-| Simultaneous read/write | Returned head, appended tail, count hold |
-| Simultaneous request while empty | Write accepted, read rejected |
-| Simultaneous request while full | Read accepted, write rejected |
-| Multiple pointer wraps | Legal addressing and ordering |
+| 异步复位 | 指针、数量、输出数据和状态标志 |
+| 单次写入与读取 | 数量变化和返回数据 |
+| 有序数据流 | 先进先出顺序 |
+| 重复空读 | 状态和 `rd_data` 保持 |
+| 填满与排空 | 每个数量等级和边界标志 |
+| 满状态拒绝写入 | 原有数据保持完整 |
+| 正常同时读写 | 返回队首、加入队尾、数量保持 |
+| 空状态同时请求 | 接受写入、拒绝读取 |
+| 满状态同时请求 | 接受读取、拒绝写入 |
+| 多次指针回卷 | 地址合法性和数据顺序 |
 
-## Parameter Matrix
+## 参数矩阵
 
-| Data width | Depth | Purpose |
+| 数据位宽 | 深度 | 验证目的 |
 |---:|---:|---|
-| 8 | 3 | Small non-power-of-two depth |
-| 8 | 4 | Default configuration |
-| 16 | 4 | Data-width parameterization |
-| 8 | 5 | Pointer-width boundary |
-| 8 | 6 | Larger non-power-of-two depth |
+| 8 | 3 | 较小的非 2 的整数次幂深度 |
+| 8 | 4 | 默认配置 |
+| 16 | 4 | 数据位宽参数化 |
+| 8 | 5 | 指针位宽边界 |
+| 8 | 6 | 较大的非 2 的整数次幂深度 |
 
-## UVM Regression
+## UVM 回归
 
-| Group | Test | Expected result |
+| 组号 | 测试 | 预期结果 |
 |---:|---|---|
-| 1 | Minimal toolchain smoke | Pass |
-| 2 | Sequence-item contract | Pass |
-| 3 | Sequence/sequencer handshake | Pass |
-| 4 | Driver and DUT integration | Pass |
-| 5 | Monitor publication | Pass |
-| 6 | Reference-model contract | Pass |
-| 7 | Scoreboard comparison | Pass |
-| 8 | Scoreboard field mutations | Six expected errors |
-| 9 | Active agent and environment | Pass |
-| 10 | Passive agent | Pass |
-| 11 | Missing environment subscriber | One expected fatal |
-| 12 | Directed coverage closure | 100% |
-| 13 | Invalid coverage samples | Four expected errors |
-| 14 | Random coverage gate | One expected fatal |
-| 15 | 20-seed random regression and replay | Pass |
+| 1 | 最小工具链冒烟测试 | 通过 |
+| 2 | Sequence item 事务合同 | 通过 |
+| 3 | Sequence 与 sequencer 握手 | 通过 |
+| 4 | Driver 与 DUT 集成 | 通过 |
+| 5 | Monitor 事务发布 | 通过 |
+| 6 | Reference model 合同 | 通过 |
+| 7 | Scoreboard 正向比较 | 通过 |
+| 8 | Scoreboard 六字段变异 | 预期出现 6 个错误 |
+| 9 | 主动 Agent 与 Environment | 通过 |
+| 10 | 被动 Agent | 通过 |
+| 11 | Environment 缺少订阅者 | 预期出现 1 个致命错误 |
+| 12 | 定向覆盖率闭合 | 100% |
+| 13 | 非法覆盖率样本 | 预期出现 4 个错误 |
+| 14 | 随机覆盖率门槛 | 预期出现 1 个致命错误 |
+| 15 | 20 个种子的随机回归 | 通过且首个种子可重放 |
 
-## Assertions
+## 断言
 
-| Property | Expected behavior |
+| 性质 | 适用场景 |
 |---|---|
-| Mid-state simultaneous read/write | Count holds |
-| Empty read | Count, empty flag, and read data hold |
-| Full write | Count, full flag, and read data hold |
-| Empty-state simultaneous request | Count becomes one |
-| Full-state simultaneous request | Count becomes `DEPTH - 1` |
+| 复位清空 | 异步复位和保持复位 |
+| 空读保持 | `empty && rd_en` |
+| 满写保持 | `full && wr_en` |
+| 正常同时读写数量保持 | `wr_en && rd_en && !empty && !full` |
+| 数量范围合法 | `0 <= data_count <= DEPTH` |
 
-## Design Mutations
+## 故障注入
 
-| Identifier | Mutation | Required detection |
-|---|---|---|
-| BUG-INJECT-001 | Increment count on simultaneous read/write | Count mismatch |
-| BUG-INJECT-002 | Allow pointer to exceed `DEPTH - 1` | Data mismatch |
-| BUG-INJECT-003 | Overwrite data on rejected full write | Subsequent read mismatch |
+| 编号 | 故障 | 预期检查器 |
+|---:|---|---|
+| 001 | 同时读写时数量错误增加 | 定向状态检查 |
+| 002 | 非 2 的整数次幂深度下指针进入非法地址 | 参考模型和记分板 |
+| 003 | 满状态拒绝写入后仍覆盖存储数据 | 后续排空数据比较 |
+
+DUT = Design Under Test，被测设计。
+
+UVM = Universal Verification Methodology，通用验证方法学。

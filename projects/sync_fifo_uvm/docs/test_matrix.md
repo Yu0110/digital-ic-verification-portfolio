@@ -51,11 +51,11 @@
 
 | 性质 | 适用场景 |
 |---|---|
-| 复位清空 | 异步复位和保持复位 |
-| 空读保持 | `empty && rd_en` |
-| 满写保持 | `full && wr_en` |
 | 正常同时读写数量保持 | `wr_en && rd_en && !empty && !full` |
-| 数量范围合法 | `0 <= data_count <= DEPTH` |
+| 空读保持状态和读数据 | `!wr_en && rd_en && empty` |
+| 满写保持状态和读数据 | `wr_en && !rd_en && full` |
+| 空状态同时请求只接受写入 | `wr_en && rd_en && empty` |
+| 满状态同时请求只接受读取 | `wr_en && rd_en && full` |
 
 ## 故障注入
 

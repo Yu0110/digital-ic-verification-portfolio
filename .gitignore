@@ -22,5 +22,8 @@ __pycache__/
 *.key
 *.dat
 
+# Generated local backups are not portfolio artifacts.
+archive/local_generated_outputs/
+
 # Personal interview preparation stays local.
 projects/*/docs/interview_preparation.md

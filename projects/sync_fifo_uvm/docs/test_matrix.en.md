@@ -49,13 +49,13 @@
 
 ## Assertions
 
-| Property | Expected behavior |
-|---|---|
-| Mid-state simultaneous read/write | Count holds |
-| Empty read | Count, empty flag, and read data hold |
-| Full write | Count, full flag, and read data hold |
-| Empty-state simultaneous request | Count becomes one |
-| Full-state simultaneous request | Count becomes `DEPTH - 1` |
+| Property | Trigger | Expected behavior |
+|---|---|---|
+| Mid-state simultaneous read/write | `wr_en && rd_en && !empty && !full` | Count holds |
+| Empty read | `!wr_en && rd_en && empty` | Count, empty flag, and read data hold |
+| Full write | `wr_en && !rd_en && full` | Count, full flag, and read data hold |
+| Empty-state simultaneous request | `wr_en && rd_en && empty` | Count becomes one; read data holds |
+| Full-state simultaneous request | `wr_en && rd_en && full` | Count becomes `DEPTH - 1` |
 
 ## Design Mutations
 

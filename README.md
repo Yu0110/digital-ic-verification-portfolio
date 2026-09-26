@@ -10,7 +10,7 @@
 |---|---|---|---|
 | [参数化同步 FIFO 与 UVM 验证](projects/sync_fifo_uvm/README.md) | 参数化设计、分层测试平台、SVA、UVM、约束随机、功能覆盖率、故障注入 | 5 种参数配置、539 次定向检查、15/15 组 UVM 回归、20 个随机种子、4,080 次比较、3/3 类故障检出 | 已完成 |
 | [四请求者轮询仲裁器](projects/round_robin_arbiter/README.md) | 黑盒参考模型、穷举状态验证、有界公平性、SVA、故障注入 | 64/64 状态/请求组合、60/60 公平性场景、1,712 次比较、4 条 SVA、1/1 故障检出 | 已完成 |
-| APB-UART UVM 验证 | 寄存器接口、串口收发、协议检查与覆盖率 | 规格确定后发布 | 规划中 |
+| [APB 寄存器外设验证](projects/apb_uart/README.md) | 等待与错误响应、请求匹配、协议检查、伪随机与显式功能覆盖、故障注入 | 3 种等待配置、9 组随机回归、1971 笔传输（含定向）、11/11 定义覆盖格、5 类电路故障 | 约定范围已验证；不含 UART/UVM |
 
 FIFO = First In First Out，先进先出队列。
 
@@ -35,15 +35,15 @@ UART = Universal Asynchronous Receiver/Transmitter，通用异步收发器。
 
 ## 快速运行
 
-快速回归需要 Icarus Verilog、GNU Make 和 Bash。完整回归还需要 Verilator、Git 和 C++ 编译工具链。
+快速回归需要 Icarus Verilog、Verilator、C++ 编译工具链、GNU Make 和 Bash。完整 FIFO 回归还需要 Git 下载固定版本的 UVM。
 
-运行两个已发布项目的快速检查：
+运行三个已发布项目的快速检查：
 
 ```bash
 ./scripts/run_all.sh
 ```
 
-运行两个项目的完整可发布回归，包括断言、约束随机和故障注入：
+运行三个项目的完整回归，包括各项目支持的断言、随机测试和故障注入：
 
 ```bash
 ./scripts/run_all.sh --full
@@ -56,6 +56,8 @@ make -C projects/round_robin_arbiter directed
 make -C projects/round_robin_arbiter verify
 make -C projects/sync_fifo_uvm directed
 make -C projects/sync_fifo_uvm verify
+make -C projects/apb_uart test
+make -C projects/apb_uart regression
 ```
 
 首次执行完整回归时，脚本会下载固定版本的 UVM 2020.3.1 到项目内的 `.deps/` 目录。依赖、日志、波形与构建产物均被版本控制忽略。
@@ -66,7 +68,8 @@ make -C projects/sync_fifo_uvm verify
 digital-ic-verification-portfolio/
 ├── projects/
 │   ├── round_robin_arbiter/   四请求者轮询仲裁器
-│   └── sync_fifo_uvm/         参数化同步 FIFO 与完整验证环境
+│   ├── sync_fifo_uvm/         参数化同步 FIFO 与完整验证环境
+│   └── apb_uart/              APB 寄存器验证（历史目录名，无串口）
 ├── scripts/
 │   └── run_all.sh             作品集统一回归入口
 ├── README.md                  简体中文首页

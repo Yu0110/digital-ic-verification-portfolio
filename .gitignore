@@ -21,3 +21,6 @@ __pycache__/
 *.pem
 *.key
 *.dat
+
+# Personal interview preparation stays local.
+projects/*/docs/interview_preparation.md

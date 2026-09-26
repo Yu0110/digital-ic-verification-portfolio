@@ -10,7 +10,7 @@ This repository presents reproducible digital Integrated Circuit (IC, 集成电�
 |---|---|---|---|
 | [Parameterized synchronous FIFO with UVM verification](projects/sync_fifo_uvm/README.en.md) | Parameterization, layered testbench, SVA, UVM, constrained random testing, functional coverage, and fault injection | 5 configurations, 539 directed checks, 15/15 UVM regression groups, 20 random seeds, 4,080 comparisons, and 3/3 injected faults detected | Complete |
 | [Four-requester round-robin arbiter](projects/round_robin_arbiter/README.en.md) | Black-box reference model, exhaustive state verification, bounded fairness, SVA, and fault injection | 64/64 state/request combinations, 60/60 fairness scenarios, 1,712 comparisons, 4 SVA properties, and 1/1 fault detected | Complete |
-| APB-UART UVM verification | Register interface, serial transmit/receive behavior, protocol checks, and coverage | To be published after the specification is finalized | Planned |
+| [APB register peripheral verification](projects/apb_uart/README.en.md) | Wait/error behavior, request matching, protocol checks, pseudorandom traffic, explicit functional coverage, fault injection | 3 wait settings, 9 random runs, 1,971 transfers including directed traffic, 11/11 defined bins, 5 DUT fault classes | Verified within documented scope; no UART/UVM |
 
 FIFO = First In First Out (先进先出队列).
 
@@ -36,15 +36,15 @@ The synchronous FIFO project contains the complete engineering-style verificatio
 
 ## Quick Start
 
-The quick regression requires Icarus Verilog, GNU Make, and Bash. The full regression additionally requires Verilator, Git, and a C++ toolchain.
+The quick regression requires Icarus Verilog, Verilator, a C++ toolchain, GNU Make, and Bash. The full FIFO suite also needs Git to obtain the pinned UVM dependency.
 
-Run the quick checks for both published projects:
+Run the quick checks for all three published projects:
 
 ```bash
 ./scripts/run_all.sh
 ```
 
-Run the complete publishable suites for both projects, including assertions, constrained random testing, and fault injection:
+Run the complete suites for all three projects, including each project's supported assertions, random tests, and fault injection:
 
 ```bash
 ./scripts/run_all.sh --full
@@ -57,6 +57,8 @@ make -C projects/round_robin_arbiter directed
 make -C projects/round_robin_arbiter verify
 make -C projects/sync_fifo_uvm directed
 make -C projects/sync_fifo_uvm verify
+make -C projects/apb_uart test
+make -C projects/apb_uart regression
 ```
 
 On the first full run, the setup script installs the pinned UVM 2020.3.1 source under `.deps/`. Third-party dependencies, logs, waveforms, and build products are excluded from version control.
@@ -67,7 +69,8 @@ On the first full run, the setup script installs the pinned UVM 2020.3.1 source 
 digital-ic-verification-portfolio/
 ├── projects/
 │   ├── round_robin_arbiter/   Four-requester round-robin arbiter
-│   └── sync_fifo_uvm/         Parameterized synchronous FIFO and verification environment
+│   ├── sync_fifo_uvm/         Parameterized synchronous FIFO and verification environment
+│   └── apb_uart/              APB register verification (historical name; no UART)
 ├── scripts/
 │   └── run_all.sh             Portfolio regression entry point
 ├── README.md                  Simplified Chinese home page

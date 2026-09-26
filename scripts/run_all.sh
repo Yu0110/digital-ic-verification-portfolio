@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# 作品集统一入口：默认执行两个项目的快速回归，--full 执行完整验证套件。
+# 作品集统一入口：默认执行三个项目的快速回归，--full 执行完整验证套件。
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RUN_FULL=0
 
@@ -10,8 +10,8 @@ usage() {
     cat <<'EOF'
 Usage: ./scripts/run_all.sh [--full]
 
-  no option  Run the round-robin arbiter test and FIFO directed regression.
-  --full     Run the complete round-robin arbiter and FIFO suites.
+  no option  Run the arbiter, FIFO, and APB directed regressions.
+  --full     Run the complete arbiter, FIFO, and APB suites.
   --help     Show this help message.
 EOF
 }
@@ -40,15 +40,19 @@ if (( $# > 1 )); then
 fi
 
 if (( RUN_FULL == 1 )); then
-    printf '\n[1/2] Four-requester round-robin arbiter: full verification suite\n'
+    printf '\n[1/3] Four-requester round-robin arbiter: full verification suite\n'
     make -C "${ROOT_DIR}/projects/round_robin_arbiter" verify
-    printf '\n[2/2] Parameterized synchronous FIFO: full verification suite\n'
+    printf '\n[2/3] Parameterized synchronous FIFO: full verification suite\n'
     make -C "${ROOT_DIR}/projects/sync_fifo_uvm" verify
-    printf '\nALL PORTFOLIO FULL TESTS PASSED: 2/2\n'
+    printf '\n[3/3] APB register peripheral: full verification suite\n'
+    make -C "${ROOT_DIR}/projects/apb_uart" regression
+    printf '\nALL PORTFOLIO FULL TESTS PASSED: 3/3\n'
 else
-    printf '\n[1/2] Four-requester round-robin arbiter: exhaustive directed regression\n'
+    printf '\n[1/3] Four-requester round-robin arbiter: exhaustive directed regression\n'
     make -C "${ROOT_DIR}/projects/round_robin_arbiter" directed
-    printf '\n[2/2] Parameterized synchronous FIFO: directed regression\n'
+    printf '\n[2/3] Parameterized synchronous FIFO: directed regression\n'
     make -C "${ROOT_DIR}/projects/sync_fifo_uvm" directed
-    printf '\nALL PORTFOLIO QUICK TESTS PASSED: 2/2\n'
+    printf '\n[3/3] APB register peripheral: directed regression\n'
+    make -C "${ROOT_DIR}/projects/apb_uart" test
+    printf '\nALL PORTFOLIO QUICK TESTS PASSED: 3/3\n'
 fi

@@ -10,7 +10,7 @@ This repository presents reproducible digital Integrated Circuit (IC, 集成电�
 |---|---|---|---|
 | [Parameterized synchronous FIFO with UVM verification](projects/sync_fifo_uvm/README.en.md) | Parameterization, layered testbench, SVA, UVM, constrained random testing, functional coverage, and fault injection | 5 configurations, 539 directed checks, 15/15 UVM regression groups, 20 random seeds, 4,080 comparisons, and 3/3 injected faults detected | Complete |
 | [Four-requester round-robin arbiter](projects/round_robin_arbiter/README.en.md) | Black-box reference model, exhaustive state verification, bounded fairness, SVA, and fault injection | 64/64 state/request combinations, 60/60 fairness scenarios, 1,712 comparisons, 4 SVA properties, and 1/1 fault detected | Complete |
-| [APB register peripheral verification](projects/apb_uart/README.en.md) | Wait/error behavior, request matching, protocol checks, pseudorandom traffic, explicit functional coverage, fault injection | 3 wait settings, 9 random runs, 1,971 transfers including directed traffic, 11/11 defined bins, 5 DUT fault classes | Verified within documented scope; no UART/UVM |
+| [APB and UART peripheral verification](projects/apb_uart/README.en.md) | APB wait/error behavior, request matching, protocol checks, random coverage, 8N1 serial TX/RX | APB baseline: 1,971 transfers and 5 fault classes; UART: 6 baud/wait configurations | UART implemented; not UVM |
 
 FIFO = First In First Out (先进先出队列).
 
@@ -58,6 +58,7 @@ make -C projects/round_robin_arbiter verify
 make -C projects/sync_fifo_uvm directed
 make -C projects/sync_fifo_uvm verify
 make -C projects/apb_uart test
+make -C projects/apb_uart uart
 make -C projects/apb_uart regression
 ```
 
@@ -70,7 +71,7 @@ digital-ic-verification-portfolio/
 ├── projects/
 │   ├── round_robin_arbiter/   Four-requester round-robin arbiter
 │   ├── sync_fifo_uvm/         Parameterized synchronous FIFO and verification environment
-│   └── apb_uart/              APB register verification (historical name; no UART)
+│   └── apb_uart/              APB register baseline and 8N1 UART extension
 ├── scripts/
 │   └── run_all.sh             Portfolio regression entry point
 ├── README.md                  Simplified Chinese home page

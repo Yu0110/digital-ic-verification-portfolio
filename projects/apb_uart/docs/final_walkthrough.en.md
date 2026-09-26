@@ -2,7 +2,7 @@
 
 [简体中文](final_walkthrough.md) | **English**
 
-This is single-peripheral APB3 register verification, not UART or a complete UVM verification IP. The directory retains its original planning name.
+This walkthrough covers the original two-register APB3 teaching baseline. The project now also has a separate APB-connected UART extension; see the [project README](../README.en.md). Neither is a complete UVM verification IP.
 
 ## Follow One Write and Read
 

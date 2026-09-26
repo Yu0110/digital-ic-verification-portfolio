@@ -10,7 +10,7 @@
 |---|---|---|---|
 | [参数化同步 FIFO 与 UVM 验证](projects/sync_fifo_uvm/README.md) | 参数化设计、分层测试平台、SVA、UVM、约束随机、功能覆盖率、故障注入 | 5 种参数配置、539 次定向检查、15/15 组 UVM 回归、20 个随机种子、4,080 次比较、3/3 类故障检出 | 已完成 |
 | [四请求者轮询仲裁器](projects/round_robin_arbiter/README.md) | 黑盒参考模型、穷举状态验证、有界公平性、SVA、故障注入 | 64/64 状态/请求组合、60/60 公平性场景、1,712 次比较、4 条 SVA、1/1 故障检出 | 已完成 |
-| [APB 寄存器外设验证](projects/apb_uart/README.md) | 等待与错误响应、请求匹配、协议检查、伪随机与显式功能覆盖、故障注入 | 3 种等待配置、9 组随机回归、1971 笔传输（含定向）、11/11 定义覆盖格、5 类电路故障 | 约定范围已验证；不含 UART/UVM |
+| [APB + UART 外设验证](projects/apb_uart/README.md) | APB 等待与错误响应、请求匹配、协议检查、随机覆盖、8N1 串口收发 | APB 基线 1971 笔传输与 5 类故障；UART 扩展 6 组分频/等待配置 | 已实现 UART；非 UVM |
 
 FIFO = First In First Out，先进先出队列。
 
@@ -57,6 +57,7 @@ make -C projects/round_robin_arbiter verify
 make -C projects/sync_fifo_uvm directed
 make -C projects/sync_fifo_uvm verify
 make -C projects/apb_uart test
+make -C projects/apb_uart uart
 make -C projects/apb_uart regression
 ```
 
@@ -69,7 +70,7 @@ digital-ic-verification-portfolio/
 ├── projects/
 │   ├── round_robin_arbiter/   四请求者轮询仲裁器
 │   ├── sync_fifo_uvm/         参数化同步 FIFO 与完整验证环境
-│   └── apb_uart/              APB 寄存器验证（历史目录名，无串口）
+│   └── apb_uart/              APB 寄存器基线与 8N1 UART 扩展
 ├── scripts/
 │   └── run_all.sh             作品集统一回归入口
 ├── README.md                  简体中文首页

@@ -30,4 +30,4 @@ The additional `+coverage +no_close +random_count=0` run completes nine correctl
 
 ## Limits
 
-No complete reset/wait/address cross, random mid-transfer reset, exhaustive addresses/data, pipelined concurrency, or UART is claimed. Basic directed and dedicated protocol tests remain necessary. Writes overwritten before readback are not all independently proven correct by the bus-level model.
+The 11/11 bins on this page cover only the original APB register baseline, not the new UART extension. No complete reset/wait/address cross, random mid-transfer reset, exhaustive addresses/data, or pipelined concurrency is claimed. Basic directed and dedicated protocol tests remain necessary. Writes overwritten before readback are not all independently proven correct by the bus-level model.

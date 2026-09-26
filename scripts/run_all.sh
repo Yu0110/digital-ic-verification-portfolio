@@ -10,8 +10,8 @@ usage() {
     cat <<'EOF'
 Usage: ./scripts/run_all.sh [--full]
 
-  no option  Run the arbiter, FIFO, and APB directed regressions.
-  --full     Run the complete arbiter, FIFO, and APB suites.
+  no option  Run the arbiter, FIFO, APB, and UART directed/smoke regressions.
+  --full     Run the complete arbiter, FIFO, APB, and UART suites.
   --help     Show this help message.
 EOF
 }
@@ -44,7 +44,7 @@ if (( RUN_FULL == 1 )); then
     make -C "${ROOT_DIR}/projects/round_robin_arbiter" verify
     printf '\n[2/3] Parameterized synchronous FIFO: full verification suite\n'
     make -C "${ROOT_DIR}/projects/sync_fifo_uvm" verify
-    printf '\n[3/3] APB register peripheral: full verification suite\n'
+    printf '\n[3/3] APB and UART peripheral: full verification suite\n'
     make -C "${ROOT_DIR}/projects/apb_uart" regression
     printf '\nALL PORTFOLIO FULL TESTS PASSED: 3/3\n'
 else
@@ -52,7 +52,8 @@ else
     make -C "${ROOT_DIR}/projects/round_robin_arbiter" directed
     printf '\n[2/3] Parameterized synchronous FIFO: directed regression\n'
     make -C "${ROOT_DIR}/projects/sync_fifo_uvm" directed
-    printf '\n[3/3] APB register peripheral: directed regression\n'
+    printf '\n[3/3] APB and UART peripheral: directed regression and serial smoke\n'
     make -C "${ROOT_DIR}/projects/apb_uart" test
+    make -C "${ROOT_DIR}/projects/apb_uart" uart-smoke
     printf '\nALL PORTFOLIO QUICK TESTS PASSED: 3/3\n'
 fi

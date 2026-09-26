@@ -1,19 +1,19 @@
-# APB 寄存器外设验证
+# APB + UART 外设验证
 
 **简体中文** | [English](README.en.md)
 
-两个寄存器地址、可配置等待、错误响应、定向与随机自检、请求匹配、协议检查和功能覆盖统计。目录沿用规划名称 `apb_uart`，没有 UART 串口功能，也不是 UVM 类环境。
+项目保留原两寄存器 APB 教学基线，并新增独立的 APB+UART 集成外设。基线包含可配置等待、错误响应、请求匹配、协议检查和随机覆盖；扩展实现 8N1 串口收发及 APB 寄存器访问。两套都是可运行的 RTL 与自检，均不是 UVM 类环境。
 
 APB = Advanced Peripheral Bus，高级外设总线；RTL = Register Transfer Level，寄存器传输级；DUT = Design Under Test，被测设计。
 
 ## 从哪里看
 
-先看 [完整流程与限制](docs/final_walkthrough.md)；最新独立构建结果见 [发布回归](reports/publication_regression.md)。
+原 APB 基线的完整流程见 [基线讲解](docs/final_walkthrough.md)，其独立构建结果见 [历史发布回归](reports/publication_regression.md)。UART 扩展的结果见 [UART 回归](reports/uart_regression.md)。
 
-1. `spec.md`：外设应该做什么。
-2. `rtl/apb_regs.sv`：被测寄存器模块。
-3. `tb/apb_regs_tb.sv`：发送请求、计算期望、自动比较。
-4. `notes.md`：写入时机和独立期望值。
+1. `spec.md`：基线与 UART 扩展的寄存器、时序和错误行为。
+2. `rtl/apb_regs.sv`、`tb/apb_regs_tb.sv`：原 APB 基线及自检。
+3. `rtl/apb_uart.sv`、`tb/apb_uart_tb.sv`：集成 UART 及串行/APB 自检。
+4. `notes.md`：基线写入时机和独立期望值。
 
 ## 运行
 
@@ -21,6 +21,8 @@ APB = Advanced Peripheral Bus，高级外设总线；RTL = Register Transfer Lev
 
 ```sh
 make test
+make uart
+make uart-smoke
 make faults
 make dut-faults
 make lint
@@ -31,7 +33,9 @@ make random
 make regression
 ```
 
-`test` 测试等待参数 0、1、3；每组必须出现 `APB_PASS`，并完成 20 笔传输。`faults` 故意启用提前写入错误，每组必须出现 `EXPECTED_FAULT_DETECTED`。错误版是人为注入，不是实际产品缺陷。
+`make uart` 覆盖 8/16 时钟每位、0/1/3 拍 APB 等待的六组配置，检查 TX 位序、TX→RX 回环、忙时拒写、接收溢出、帧错误、复位和访问权限。`make uart-smoke` 只跑 8 时钟/位与 0 等待。`make regression` 同时运行完整 UART 和原 APB 回归。串口为单字节收发缓冲，不含 FIFO、奇偶校验、流控或中断。
+
+原 APB 基线的 `test` 测试等待参数 0、1、3；每组必须出现 `APB_PASS`，并完成 20 笔传输。`faults` 故意启用提前写入错误，每组必须出现 `EXPECTED_FAULT_DETECTED`。错误版是人为注入，不是实际产品缺陷。
 
 日志在 `build/<模式>/wait_<拍数>/run.log`，编译日志在同目录的 `compile.log`。波形在 `build/wave/wait_<拍数>/apb_regs.vcd`。
 
